@@ -12,7 +12,7 @@ include = [
 ]
 
 [tool.poetry.scripts]    
-dump-key = "monugstore.scripts.dump_json:main"
+mgs-dump-key = "monugstore.scripts.dump_json:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"

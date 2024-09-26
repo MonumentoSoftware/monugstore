@@ -10,7 +10,7 @@ class OauthHandler:
     """
 
     @staticmethod
-    def credentials_from_json_string(dict_string: str) -> service_account.Credentials:
+    def credentials_from_json_string(dict_string: str, escape=True) -> service_account.Credentials:
         """
         Create a credentials object from a JSON string.
 
@@ -21,7 +21,8 @@ class OauthHandler:
             The credentials object
         """
         info_dict: dict[str, str] = json.loads(dict_string)
-        info_dict["private_key"] = info_dict["private_key"].replace("\\n", "\n")
+        if escape:
+            info_dict["private_key"] = info_dict["private_key"].replace("\\n", "\n")
         return service_account.Credentials.from_service_account_info(info_dict)
 
     @staticmethod
