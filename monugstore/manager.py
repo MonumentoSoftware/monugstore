@@ -20,7 +20,7 @@ class GCSManager:
         self.logger = setup_logger(__class__.__name__)
 
     @classmethod
-    def from_credentials(cls, credentials: service_account.Credentials) -> "GCSManager":
+    def from_json_string(cls, credentials: service_account.Credentials) -> "GCSManager":
         """
         Create a GCSManager object from a service account credentials object.
 
@@ -132,10 +132,16 @@ class GCSManager:
         Returns:
             None
         """
-        bucket = self.client.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-        blob.delete()
-        self.logger.info(f"Blob {blob_name} deleted from bucket {bucket_name}.")
+        try:
+            bucket = self.client.bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            blob.delete()
+            self.logger.info(f"Blob {blob_name} deleted from bucket {bucket_name}.")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error deleting blob {blob_name} from bucket {bucket_name}: {e}")
+            return False
 
     def delete_bucket(self, bucket_name: str) -> None:
         """
