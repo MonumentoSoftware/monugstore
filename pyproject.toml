@@ -17,10 +17,8 @@ mgs-dump-key = "monugstore.scripts.dump_json:main"
 [tool.poetry.dependencies]
 python = "^3.9"
 google-cloud-storage = "^2.18.2"
-pydantic = "^2.9.2"
 google-cloud-secret-manager = "^2.20.2"
 python-dotenv = "^1.0.1"
-pymongo = "^4.9.1"
 
 
 [build-system]
