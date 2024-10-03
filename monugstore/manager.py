@@ -1,7 +1,10 @@
+import json
 from typing import List
+import os
 
 from google.oauth2 import service_account
 from google.cloud import storage
+from dotenv import load_dotenv
 
 from .utils.logging import setup_logger
 
@@ -15,12 +18,13 @@ class GCSManager:
     - from_json_file: Create a GCSManager object from a service account JSON file
     """
 
+    logger = setup_logger("GCSManager")
+
     def __init__(self, client: storage.Client) -> None:
         self.client = client
-        self.logger = setup_logger(__class__.__name__)
 
     @classmethod
-    def from_json_string(cls, credentials: service_account.Credentials) -> "GCSManager":
+    def from_json_string(cls, env_variable: str) -> "GCSManager":
         """
         Create a GCSManager object from a service account credentials object.
 
@@ -31,9 +35,14 @@ class GCSManager:
             GCSManager: The GCSManager object
         """
         try:
-            client = storage.Client(credentials=credentials)
+            # check if the environment variable is set
+            if not os.getenv(env_variable):
+                load_dotenv()
+            cred = service_account.Credentials.from_service_account_info(json.loads(os.getenv(env_variable)))
+            client = storage.Client(credentials=cred)
             return cls(client)
         except Exception as e:
+            cls.logger.error(f"Error creating GCSManager: {e}")
             raise Exception(f"Error creating GCSManager: {e}")
 
     @classmethod
@@ -64,9 +73,15 @@ class GCSManager:
         :param location: The location for the bucket (default is "US")
         :return: The created bucket object
         """
+        # Check if the bucket already exists
+        if self.client.lookup_bucket(bucket_name):
+            self.logger.info(f"Bucket {bucket_name} already exists.")
+            return self.client.bucket(bucket_name)
+
         bucket = self.client.bucket(bucket_name)
         bucket.location = location
         bucket = self.client.create_bucket(bucket)
+        self.logger.info(f"Bucket {bucket_name} created in {location}.")
         self.logger.info(f"Bucket {bucket_name} created in {location}.")
         return bucket
 
