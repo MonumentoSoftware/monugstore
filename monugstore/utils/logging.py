@@ -1,4 +1,16 @@
 import logging
+from types import MappingProxyType
+from typing import Literal
+
+LEVELS = MappingProxyType({
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL,
+})
+
+LOG_LEVELS = Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
 
 class ColorfulFormatter(logging.Formatter):
@@ -25,7 +37,7 @@ class ColorfulFormatter(logging.Formatter):
         return f'{message}'
 
 
-def setup_logger(app_name: str, debug: bool = True):
+def setup_logger(app_name: str, debug_level: LOG_LEVELS = 'DEBUG') -> logging.Logger:
     """
     This function sets up the logger for the application
     """
@@ -37,7 +49,9 @@ def setup_logger(app_name: str, debug: bool = True):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    if debug is False:
-        handler.setLevel(logging.ERROR)
+    if debug_level in LEVELS:
+        logger.setLevel(LEVELS[debug_level])
+    else:
+        raise ValueError(f"Invalid log level: {debug_level}")
 
     return logger
