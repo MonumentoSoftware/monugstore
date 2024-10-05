@@ -1,5 +1,6 @@
-from PIL import Image
 import os
+
+from PIL import Image
 
 
 def create_thumbnail(image_path, thumbnail_path, size=(128, 128)):
@@ -14,6 +15,7 @@ def create_thumbnail(image_path, thumbnail_path, size=(128, 128)):
         with Image.open(image_path) as img:
             img.thumbnail(size)
             img.save(thumbnail_path)
+        return thumbnail_path
 
     except Exception as e:
         print(f"Error creating thumbnail: {e}")

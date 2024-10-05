@@ -25,6 +25,8 @@ google-cloud-secret-manager = "^2.20.2"
 python-dotenv = "^1.0.1"
 rich = "^13.9.1"
 pillow = "^10.4.0"
+pydantic = "^2.9.2"
+pymongo = "^4.10.1"
 
 
 [build-system]
