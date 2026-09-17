@@ -15,10 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
+- `find_files(..., verbose=True)` replaces the `print` argument that shadowed the builtin.
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.
 - Supported Python range is `^3.10` (Pillow 12 and python-dotenv 1.2 require it).
+
+### Fixed
+- `make dump_key` runs `uv run mgs-dump-key` instead of a missing repo-root script.
 
 ### Removed
 - Unused `pydantic` dependency.

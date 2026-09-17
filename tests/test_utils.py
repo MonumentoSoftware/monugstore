@@ -16,7 +16,7 @@ def test_find_files(tmp_path, capsys):
     nested.mkdir()
     (nested / "c.txt").write_text("c")
 
-    found = find_files(str(tmp_path), [".txt"], print=True)
+    found = find_files(str(tmp_path), [".txt"], verbose=True)
 
     assert sorted(Path(p).name for p in found) == ["a.txt", "c.txt"]
     out = capsys.readouterr().out
@@ -26,7 +26,7 @@ def test_find_files(tmp_path, capsys):
 def test_find_files_silent(tmp_path, capsys):
     (tmp_path / "a.txt").write_text("a")
 
-    found = find_files(str(tmp_path), [".txt"], print=False)
+    found = find_files(str(tmp_path), [".txt"], verbose=False)
 
     assert len(found) == 1
     assert capsys.readouterr().out == ""
