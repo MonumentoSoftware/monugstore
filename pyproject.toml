@@ -5,17 +5,18 @@ description = "A quick python cookbook for dealing with google-cloud-storage"
 authors = ["Pedro Cavalcanti"]
 license = "MIT"
 readme = "README.md"
-
-# Add this section to include the scripts folder
-include = [
-    "scripts/*"
-]
+homepage = "https://github.com/MonumentoSoftware/monugstore"
+repository = "https://github.com/MonumentoSoftware/monugstore"
+documentation = "https://github.com/MonumentoSoftware/monugstore#readme"
 
 exclude = [
     "local_scripts/*"
 ]
 
-[tool.poetry.scripts]    
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/MonumentoSoftware/monugstore/issues"
+
+[tool.poetry.scripts]
 mgs-dump-key = "monugstore.scripts.dump_json:main"
 
 [tool.poetry.dependencies]
@@ -24,11 +25,34 @@ google-cloud-storage = "^2.18.2"
 google-cloud-secret-manager = "^2.20.2"
 python-dotenv = "^1.0.1"
 rich = "^13.9.1"
-pillow = "^10.4.0"
-pydantic = "^2.9.2"
-pymongo = "^4.10.1"
+pillow = {version = "^10.4.0", optional = true}
+pymongo = {version = "^4.10.1", optional = true}
 
+[tool.poetry.extras]
+images = ["pillow"]
+mongo = ["pymongo"]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+pillow = "^10.4.0"
+pymongo = "^4.10.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --cov=monugstore --cov-report=term-missing --cov-fail-under=85"
+
+[tool.coverage.run]
+branch = true
+source = ["monugstore"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]
