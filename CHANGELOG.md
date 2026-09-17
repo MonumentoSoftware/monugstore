@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
 - Optional `images` and `mongo` modules raise `ImportError` pointing at the extra when it is not installed.
+- `OauthHandler` is now `ServiceAccountCredentials` (`monugstore.credentials`).
 - Source and tests are formatted with ruff; CI runs `ruff format --check`.
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.
 - Supported Python range is `^3.10` (Pillow 12 and python-dotenv 1.2 require it).

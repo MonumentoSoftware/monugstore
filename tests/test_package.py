@@ -1,13 +1,13 @@
 import pytest
 
 import monugstore
-from monugstore import GCSManager, OauthHandler
+from monugstore import GCSManager, ServiceAccountCredentials
 
 
 def test_public_exports():
-    assert monugstore.__all__ == ["GCSManager", "OauthHandler"]
+    assert monugstore.__all__ == ["GCSManager", "ServiceAccountCredentials"]
     assert monugstore.GCSManager is GCSManager
-    assert monugstore.OauthHandler is OauthHandler
+    assert monugstore.ServiceAccountCredentials is ServiceAccountCredentials
 
 
 def test_bucket_manager_is_not_importable():

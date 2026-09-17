@@ -37,7 +37,7 @@ To install the project, clone it, and run:
 uv sync
 ```
 
-Optional extras install Pillow (`images`) and pymongo (`mongo`). They are not part of the public API (`GCSManager`, `OauthHandler`):
+Optional extras install Pillow (`images`) and pymongo (`mongo`). They are not part of the public API (`GCSManager`, `ServiceAccountCredentials`):
 
 ```
 uv sync --extra images --extra mongo

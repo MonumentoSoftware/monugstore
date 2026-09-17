@@ -4,9 +4,9 @@ from google.cloud import secretmanager
 from google.oauth2 import service_account
 
 
-class OauthHandler:
+class ServiceAccountCredentials:
     """
-    Class to handle OAuth credentials for Google Cloud services.
+    Load Google service-account credentials from JSON or Secret Manager.
     """
 
     @staticmethod
