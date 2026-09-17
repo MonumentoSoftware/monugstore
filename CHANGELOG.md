@@ -7,19 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-17
+
 ### Added
 - `GCSManager.from_env()` to load service-account JSON from a named environment variable.
 - Optional extras: `images` (Pillow) and `mongo` (pymongo).
 - Typed package marker (`py.typed`) and a `src/` layout.
-- GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.12.
+- GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.13.
+- `GCSManager.delete_all_files()` to empty a bucket.
+- Tag-triggered GitHub Actions release: `uv build`, GitHub release, and PyPI trusted publishing.
+- Trove classifiers and keywords in `pyproject.toml`.
 
 ### Changed
 - Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
-- `find_files(..., verbose=True)` replaces the `print` argument that shadowed the builtin.
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
+- Optional `images` and `mongo` modules raise `ImportError` pointing at the extra when it is not installed.
+- `OauthHandler` is now `ServiceAccountCredentials` (`monugstore.credentials`).
+- Optional extras log failures instead of printing, and catch library-specific errors instead of `Exception`.
+- mypy no longer sets blanket `ignore_missing_imports`.
+- Source and tests are formatted with ruff; CI runs `ruff format --check`.
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.
-- Supported Python range is `^3.10` (Pillow 12 and python-dotenv 1.2 require it).
+- Supported Python range is `>=3.10` (Pillow 12 and python-dotenv 1.2 require it).
 
 ### Fixed
 - `make dump_key` runs `uv run mgs-dump-key` instead of a missing repo-root script.
@@ -27,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Unused `pydantic` dependency.
 - Unused `GCSManagerInterface`, `BucketExistsDecorator`, and the extra `BucketManager` client on `GCSManager`.
+- `BucketManager`; use `GCSManager` for bucket create, ACL, and emptying.
+- File-walk helpers (`monugstore.utils.files`) and the `rich` dependency they required.
 
 ### Security
 - New buckets are private unless `public=True` is passed.
@@ -37,5 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial `GCSManager`, credential helpers, and the `mgs-dump-key` CLI.
 
-[Unreleased]: https://github.com/MonumentoSoftware/monugstore/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/MonumentoSoftware/monugstore/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/MonumentoSoftware/monugstore/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/MonumentoSoftware/monugstore/releases/tag/v0.1.0

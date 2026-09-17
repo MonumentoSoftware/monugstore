@@ -1,46 +1,10 @@
 import logging
-from pathlib import Path
 
 import pytest
 
-from monugstore.utils.files import find_files, rename_file
 from monugstore.utils.json_io import check_dict_jsonable, is_jsonable, read_json, write_json
 from monugstore.utils.logging import setup_logger
 from monugstore.utils.size import format_size, get_file_size
-
-
-def test_find_files(tmp_path, capsys):
-    (tmp_path / "a.txt").write_text("a")
-    (tmp_path / "b.jpg").write_text("b")
-    nested = tmp_path / "sub"
-    nested.mkdir()
-    (nested / "c.txt").write_text("c")
-
-    found = find_files(str(tmp_path), [".txt"], verbose=True)
-
-    assert sorted(Path(p).name for p in found) == ["a.txt", "c.txt"]
-    out = capsys.readouterr().out
-    assert "a.txt" in out
-
-
-def test_find_files_silent(tmp_path, capsys):
-    (tmp_path / "a.txt").write_text("a")
-
-    found = find_files(str(tmp_path), [".txt"], verbose=False)
-
-    assert len(found) == 1
-    assert capsys.readouterr().out == ""
-
-
-def test_rename_file(tmp_path):
-    source = tmp_path / "old.txt"
-    source.write_text("hi")
-
-    new_path = rename_file(str(source), "new.txt")
-
-    assert Path(new_path).name == "new.txt"
-    assert (tmp_path / "new.txt").read_text() == "hi"
-    assert not source.exists()
 
 
 def test_json_io_roundtrip(tmp_path):
@@ -83,7 +47,7 @@ def test_get_file_size_missing(tmp_path):
         (0, "0.00 B"),
         (1024, "1024.00 B"),
         (1025, "1.00 KB"),
-        (1024 ** 2 + 1, "1.00 MB"),
+        (1024**2 + 1, "1.00 MB"),
     ],
 )
 def test_format_size(size, expected):

@@ -4,19 +4,39 @@ build-backend = "hatchling.build"
 
 [project]
 name = "monugstore"
-version = "0.1.0"
-description = "A quick python cookbook for dealing with google-cloud-storage"
+version = "0.2.0"
+description = "Python helpers for Google Cloud Storage"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
     {name = "Pedro Cavalcanti", email = "pedro@monumentosoftware.com.br"},
 ]
 requires-python = ">=3.10"
+keywords = [
+    "gcs",
+    "google-cloud",
+    "google-cloud-storage",
+    "storage",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet",
+    "Typing :: Typed",
+]
 dependencies = [
     "google-cloud-storage>=2.18.2,<3",
     "google-cloud-secret-manager>=2.20.2,<3",
     "python-dotenv>=1.2.2,<2",
-    "rich>=13.9.1,<14",
 ]
 
 [project.optional-dependencies]
@@ -74,12 +94,10 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "BLE", "RUF"]
 
-[tool.ruff.lint.per-file-ignores]
-"src/monugstore/pymongo.py" = ["BLE001"]
-"src/monugstore/utils/images.py" = ["BLE001"]
-
 [tool.mypy]
 python_version = "3.10"
 mypy_path = "src"
 explicit_package_bases = true
-ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true

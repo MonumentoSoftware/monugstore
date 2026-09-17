@@ -252,6 +252,24 @@ def test_delete_file_error(manager, mock_storage_client):
         manager.delete_file("my-bucket", "file.jpg")
 
 
+def test_delete_all_files(manager, mock_storage_client):
+    blob = MagicMock()
+    bucket = MagicMock()
+    bucket.list_blobs.return_value = [blob]
+    mock_storage_client.get_bucket.return_value = bucket
+
+    manager.delete_all_files("my-bucket")
+
+    blob.delete.assert_called_once()
+
+
+def test_delete_all_files_missing_bucket(manager, mock_storage_client):
+    mock_storage_client.get_bucket.side_effect = NotFound("missing")
+
+    with pytest.raises(NotFound):
+        manager.delete_all_files("missing")
+
+
 def test_delete_bucket(manager, mock_storage_client):
     bucket = MagicMock()
     mock_storage_client.bucket.return_value = bucket

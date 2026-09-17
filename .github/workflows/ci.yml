@@ -25,7 +25,9 @@ jobs:
         run: uv sync --all-extras --frozen
 
       - name: Ruff
-        run: uv run ruff check src tests
+        run: |
+          uv run ruff check src tests
+          uv run ruff format --check src tests
 
       - name: Mypy
         run: uv run mypy src
@@ -41,7 +43,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
 

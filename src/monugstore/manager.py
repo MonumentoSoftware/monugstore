@@ -219,6 +219,21 @@ class GCSManager:
         blob.delete()
         self.logger.info(f"Blob {blob_name} deleted from bucket {bucket_name}.")
 
+    def delete_all_files(self, bucket_name: str) -> None:
+        """
+        Delete every object in a bucket.
+
+        Args:
+            bucket_name (str): The name of the bucket
+
+        Raises:
+            google.cloud.exceptions.NotFound: If the bucket does not exist.
+        """
+        bucket = self.get_bucket(bucket_name)
+        for blob in bucket.list_blobs():
+            blob.delete()
+        self.logger.info(f"All files in {bucket_name} were deleted.")
+
     def delete_bucket(self, bucket_name: str) -> None:
         """
         Delete a bucket. The bucket must be empty before it can be deleted.

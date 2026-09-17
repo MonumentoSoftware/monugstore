@@ -2,30 +2,33 @@ import logging
 from types import MappingProxyType
 from typing import ClassVar, Literal
 
-LEVELS = MappingProxyType({
-    'DEBUG': logging.DEBUG,
-    'INFO': logging.INFO,
-    'WARNING': logging.WARNING,
-    'ERROR': logging.ERROR,
-    'CRITICAL': logging.CRITICAL,
-})
+LEVELS = MappingProxyType(
+    {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
+)
 
-LOG_LEVELS = Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+LOG_LEVELS = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
 class ColorfulFormatter(logging.Formatter):
     """
     ColorfulFormatter class for logging
     """
+
     COLORS: ClassVar[dict[str, str]] = {
-        'DEBUG': '\033[94m',  # Blue
-        'INFO': '\033[92m',   # Green
-        'WARNING': '\033[93m',  # Yellow
-        'ERROR': '\033[91m',  # Red
-        'CRITICAL': '\033[91m',  # Red
+        "DEBUG": "\033[94m",  # Blue
+        "INFO": "\033[92m",  # Green
+        "WARNING": "\033[93m",  # Yellow
+        "ERROR": "\033[91m",  # Red
+        "CRITICAL": "\033[91m",  # Red
     }
 
-    RESET = '\033[0m'
+    RESET = "\033[0m"
 
     def __init__(self, app_name: str):
         super().__init__()
@@ -34,10 +37,10 @@ class ColorfulFormatter(logging.Formatter):
     def format(self, record):
         color = self.COLORS.get(record.levelname, self.RESET)
         message = f"{color}[{self.app_name}] {record.levelname}{self.RESET}: {record.msg}"
-        return f'{message}'
+        return f"{message}"
 
 
-def setup_logger(app_name: str, debug_level: LOG_LEVELS = 'DEBUG') -> logging.Logger:
+def setup_logger(app_name: str, debug_level: LOG_LEVELS = "DEBUG") -> logging.Logger:
     """
     This function sets up the logger for the application
     """
