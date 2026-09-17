@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GCSManager.from_env()` to load service-account JSON from a named environment variable.
 - Optional extras: `images` (Pillow) and `mongo` (pymongo).
 - Typed package marker (`py.typed`) and a `src/` layout.
-- GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.12.
+- GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.13.
 - `GCSManager.delete_all_files()` to empty a bucket.
 - Tag-triggered GitHub Actions release: `uv build`, GitHub release, and PyPI trusted publishing.
 - Trove classifiers and keywords in `pyproject.toml`.
