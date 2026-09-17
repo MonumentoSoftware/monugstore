@@ -9,6 +9,10 @@ homepage = "https://github.com/MonumentoSoftware/monugstore"
 repository = "https://github.com/MonumentoSoftware/monugstore"
 documentation = "https://github.com/MonumentoSoftware/monugstore#readme"
 
+packages = [{include = "monugstore", from = "src"}]
+include = [
+    {path = "src/monugstore/py.typed", format = ["sdist", "wheel"]},
+]
 exclude = [
     "local_scripts/*"
 ]
