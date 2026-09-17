@@ -1,34 +1,85 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "monugstore"
 version = "0.1.0"
 description = "A quick python cookbook for dealing with google-cloud-storage"
-authors = ["Pedro Cavalcanti"]
-license = "MIT"
 readme = "README.md"
-
-# Add this section to include the scripts folder
-include = [
-    "scripts/*"
+license = {text = "MIT"}
+authors = [
+    {name = "Pedro Cavalcanti", email = "pedro@monumentosoftware.com.br"},
+]
+requires-python = ">=3.10"
+dependencies = [
+    "google-cloud-storage>=2.18.2,<3",
+    "google-cloud-secret-manager>=2.20.2,<3",
+    "python-dotenv>=1.2.2,<2",
+    "rich>=13.9.1,<14",
 ]
 
-exclude = [
-    "local_scripts/*"
-]
+[project.optional-dependencies]
+images = ["pillow>=12.3.0,<13"]
+mongo = ["pymongo>=4.10.1,<5"]
 
-[tool.poetry.scripts]    
+[project.urls]
+Homepage = "https://github.com/MonumentoSoftware/monugstore"
+Repository = "https://github.com/MonumentoSoftware/monugstore"
+Documentation = "https://github.com/MonumentoSoftware/monugstore#readme"
+Changelog = "https://github.com/MonumentoSoftware/monugstore/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/MonumentoSoftware/monugstore/issues"
+
+[project.scripts]
 mgs-dump-key = "monugstore.scripts.dump_json:main"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-google-cloud-storage = "^2.18.2"
-google-cloud-secret-manager = "^2.20.2"
-python-dotenv = "^1.0.1"
-rich = "^13.9.1"
-pillow = "^10.4.0"
-pydantic = "^2.9.2"
-pymongo = "^4.10.1"
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+    "pytest-cov>=5.0.0",
+    "pip-audit>=2.7.3",
+    "ruff>=0.16.0",
+    "mypy>=1.15.0,<2",
+    "bandit>=1.8.0",
+]
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/monugstore"]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/local_scripts",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --cov=monugstore --cov-report=term-missing --cov-fail-under=85"
+
+[tool.coverage.run]
+branch = true
+source = ["monugstore"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "BLE", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/monugstore/pymongo.py" = ["BLE001"]
+"src/monugstore/utils/images.py" = ["BLE001"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = "src"
+explicit_package_bases = true
+ignore_missing_imports = true

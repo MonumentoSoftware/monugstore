@@ -1,6 +1,13 @@
 .env
+.venv/
 __pycache__/
 *.pyc
+*.egg-info/
 .vscode/
 dist/
 local_scripts/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

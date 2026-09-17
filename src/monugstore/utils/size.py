@@ -28,7 +28,8 @@ def format_size(size: int) -> str:
     """
     suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
     suffix_index = 0
-    while size > 1024 and suffix_index < len(suffixes) - 1:
-        size /= 1024
+    value = float(size)
+    while value > 1024 and suffix_index < len(suffixes) - 1:
+        value /= 1024
         suffix_index += 1
-    return f"{size:.2f} {suffixes[suffix_index]}"
+    return f"{value:.2f} {suffixes[suffix_index]}"
