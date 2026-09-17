@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-17
+
 ### Added
 - `GCSManager.from_env()` to load service-account JSON from a named environment variable.
 - Optional extras: `images` (Pillow) and `mongo` (pymongo).
@@ -18,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
-- `find_files(..., verbose=True)` replaces the `print` argument that shadowed the builtin.
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
 - Optional `images` and `mongo` modules raise `ImportError` pointing at the extra when it is not installed.
@@ -27,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - mypy no longer sets blanket `ignore_missing_imports`.
 - Source and tests are formatted with ruff; CI runs `ruff format --check`.
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.
-- Supported Python range is `^3.10` (Pillow 12 and python-dotenv 1.2 require it).
+- Supported Python range is `>=3.10` (Pillow 12 and python-dotenv 1.2 require it).
 
 ### Fixed
 - `make dump_key` runs `uv run mgs-dump-key` instead of a missing repo-root script.
@@ -47,5 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial `GCSManager`, credential helpers, and the `mgs-dump-key` CLI.
 
-[Unreleased]: https://github.com/MonumentoSoftware/monugstore/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/MonumentoSoftware/monugstore/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/MonumentoSoftware/monugstore/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/MonumentoSoftware/monugstore/releases/tag/v0.1.0
