@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import json
 from typing import List
 import os
@@ -8,52 +7,7 @@ from google.oauth2 import service_account
 from google.cloud import storage
 from dotenv import load_dotenv
 
-from monugstore.buckets import BucketManager
-
 from .utils.logging import setup_logger
-
-
-class GCSManagerInterface(ABC):
-    @abstractmethod
-    def create_bucket(self, bucket_name: str, location: str = "US") -> storage.Bucket:
-        pass
-
-    @abstractmethod
-    def get_bucket(self, bucket_name: str) -> storage.Bucket:
-        pass
-
-    @abstractmethod
-    def upload_file(self, bucket_name: str, file_path: str, destination_blob_name: str) -> str:
-        pass
-
-    @abstractmethod
-    def list_files(self, bucket_name: str, prefix: str = "") -> List[str]:
-        pass
-
-    @abstractmethod
-    def download_file(self, bucket_name: str, source_blob_name: str, destination_file_name: str) -> None:
-        pass
-
-    @abstractmethod
-    def delete_file(self, bucket_name: str, blob_name: str) -> None:
-        pass
-
-    @abstractmethod
-    def delete_bucket(self, bucket_name: str) -> None:
-        pass
-
-# A decorator that looks if the bucket already exists
-# It checks if the bucket exists and if it does, it logs a message and returns the bucket object
-# If the bucket does not exist, return None. This is a good way to handle the case where the bucket already exists.
-
-
-class BucketExistsDecorator:
-    def __init__(self, func):
-        self.func = func
-
-    def __call__(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
 
 
 class GCSManager:
@@ -70,7 +24,6 @@ class GCSManager:
 
     def __init__(self, client: storage.Client) -> None:
         self.client = client
-        self.buckets = BucketManager()
 
     @classmethod
     def __load_env(cls, env_variable: str) -> str:

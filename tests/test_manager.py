@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from monugstore import GCSManager
-from monugstore.manager import BucketExistsDecorator
 
 
 def test_from_json_file_uses_path(patch_gcs, tmp_path):
@@ -257,11 +256,3 @@ def test_delete_bucket(manager, mock_storage_client):
     manager.delete_bucket("my-bucket")
 
     bucket.delete.assert_called_once()
-
-
-def test_bucket_exists_decorator_prints(capsys):
-    decorator = BucketExistsDecorator(lambda: None)
-    decorator(1, x=2)
-    out = capsys.readouterr().out
-    assert "(1,)" in out
-    assert "{'x': 2}" in out
