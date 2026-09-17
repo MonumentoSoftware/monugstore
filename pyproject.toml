@@ -12,6 +12,26 @@ authors = [
     {name = "Pedro Cavalcanti", email = "pedro@monumentosoftware.com.br"},
 ]
 requires-python = ">=3.10"
+keywords = [
+    "gcs",
+    "google-cloud",
+    "google-cloud-storage",
+    "storage",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet",
+    "Typing :: Typed",
+]
 dependencies = [
     "google-cloud-storage>=2.18.2,<3",
     "google-cloud-secret-manager>=2.20.2,<3",
