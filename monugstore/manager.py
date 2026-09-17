@@ -60,9 +60,10 @@ class GCSManager:
     """
     Class to manage Google Cloud Storage (GCS) operations.
     It requires a Google Cloud Storage client object.
-    There are two class methods to create a GCSManager object:
-    - from_credentials: Create a GCSManager object from a service account credentials object
-    - from_json_file: Create a GCSManager object from a service account JSON file
+    Class methods to create a GCSManager:
+    - from_json_file: service account JSON file path
+    - from_json_string: service account JSON string
+    - from_env: environment variable containing a service account JSON string
     """
 
     logger = setup_logger("GCSManager")
@@ -71,41 +72,37 @@ class GCSManager:
         self.client = client
         self.buckets = BucketManager()
 
-    def __load_env(self, env_variable: str) -> str:
+    @classmethod
+    def __load_env(cls, env_variable: str) -> str:
         """
-        Load the enviromental variable containing the service account JSON string and
-        create a service account credentials object.
+        Load an environment variable, optionally from a .env file.
 
         Args:
-            env_variable (str): The name of the enviromental variable
+            env_variable (str): The name of the environment variable
 
         Returns:
-            service_account.Credentials: The service account credentials object
+            str: The environment variable value
         """
         load_dotenv()
-        if not os.getenv(env_variable):
+        value = os.getenv(env_variable)
+        if not value:
             raise Exception(f"Environment variable {env_variable} not set.")
-        return os.getenv(env_variable)
+        return value
 
     @classmethod
-    def from_json_string(cls, env_variable: str) -> "GCSManager":
+    def from_json_string(cls, json_str: str) -> "GCSManager":
         """
-        Create a GCSManager object from a enviromental variable containing a service account JSON string.
-        Loads the enviromental variable and creates a service account credentials object.
-        Passes the credentials object to the storage client object.
+        Create a GCSManager from a service account JSON string.
 
         Args:
-            env_variable (str): The name of the enviromental variable containing the service account JSON string
+            json_str (str): The service account JSON content
 
         Returns:
             GCSManager: The GCSManager object
         """
-        cls.logger.debug(f"Creating GCSManager from JSON string in environment variable {env_variable}.")
+        cls.logger.debug("Creating GCSManager from JSON string.")
         try:
-            if not os.getenv(env_variable):
-                raise Exception(f"Environment variable {env_variable} not set.")
-
-            cred = service_account.Credentials.from_service_account_info(json.loads(os.getenv(env_variable)))
+            cred = service_account.Credentials.from_service_account_info(json.loads(json_str))
             client = storage.Client(credentials=cred)
             return cls(client)
         except Exception as e:
@@ -113,9 +110,9 @@ class GCSManager:
             raise Exception(f"Error creating GCSManager: {e}")
 
     @classmethod
-    def from_json_file_path(cls, json_file_path: str) -> "GCSManager":
+    def from_json_file(cls, json_file_path: str) -> "GCSManager":
         """
-        Create a GCSManager object from a service account JSON file.
+        Create a GCSManager from a service account JSON file path.
 
         Args:
             json_file_path (str): The path to the JSON file
@@ -123,23 +120,38 @@ class GCSManager:
         Returns:
             GCSManager: The GCSManager object
         """
-        load_dotenv()
-        path = cls.__load_env(cls, json_file_path)
+        cls.logger.debug(f"Creating GCSManager from JSON file {json_file_path}.")
         try:
-            client = storage.Client.from_service_account_json(path)
+            client = storage.Client.from_service_account_json(json_file_path)
             return cls(client)
         except Exception as e:
+            cls.logger.error(f"Error creating GCSManager: {e}")
             raise Exception(f"Error creating GCSManager: {e}")
+
+    @classmethod
+    def from_env(cls, env_variable: str) -> "GCSManager":
+        """
+        Create a GCSManager from an environment variable that holds service account JSON.
+
+        Args:
+            env_variable (str): The name of the environment variable
+
+        Returns:
+            GCSManager: The GCSManager object
+        """
+        cls.logger.debug(f"Creating GCSManager from environment variable {env_variable}.")
+        return cls.from_json_string(cls.__load_env(env_variable))
 
     def __str__(self) -> str:
         return f"GCSManager(project={self.client.project})"
 
-    def create_bucket(self, *, bucket_name: str, location: str = "US", public: bool = True) -> storage.Bucket:
+    def create_bucket(self, *, bucket_name: str, location: str = "US", public: bool = False) -> storage.Bucket:
         """
         Create a new bucket in the specified location.
 
         :param bucket_name: The name of the bucket to create
         :param location: The location for the bucket (default is "US")
+        :param public: If True, make the bucket and future objects public. Defaults to False.
         :return: The created bucket object
         """
         # Check if the bucket already exists
@@ -171,7 +183,7 @@ class GCSManager:
         bucket = self.client.bucket(bucket_name)
         return bucket
 
-    def upload_file(self, bucket_name: str, file_path: str, destination_blob_name: str, prefix: str, public=False) -> str:  # noqa
+    def upload_file(self, bucket_name: str, file_path: str, destination_blob_name: str, prefix: str = "", public: bool = False) -> str:
         """
         Upload a file to the specified bucket.
 
@@ -179,13 +191,16 @@ class GCSManager:
             bucket_name (str): The name of the bucket
             file_path (str): The local path to the file
             destination_blob_name (str): The name of the blob in the bucket
+            prefix (str): Optional object-prefix (folder) inside the bucket
+            public (bool): If True, make the uploaded object public. Defaults to False.
 
         Returns:
             str: The public URL of the uploaded file
         """
         bucket = self.get_bucket(bucket_name)
-        destination_path = f"{prefix}/{destination_blob_name}"
-        # Check if the file is file
+        if bucket is None:
+            return None
+        destination_path = f"{prefix}/{destination_blob_name}" if prefix else destination_blob_name
         if not pathlib.Path(file_path).is_file():
             self.logger.error(f"File {file_path} not found.")
             return None
