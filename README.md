@@ -18,6 +18,8 @@ This project aims to provide some boilerplate code to handle actions using Googl
   - [Download a file](#download-a-file)
   - [Deleting a file](#deleting-a-file)
   - [Deleting a bucket](#deleting-a-bucket)
+- [Contributing](#contributing)
+- [Security](#security)
 - [Author](#author)
 
 
@@ -202,6 +204,14 @@ bucket_name = "my-bucket"
 
 gcs_manager.delete_bucket(bucket_name)
 ```
+
+# Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Notable changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
+# Security
+
+See [SECURITY.md](SECURITY.md) to report a vulnerability.
 
 # Author
 
