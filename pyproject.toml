@@ -98,4 +98,6 @@ select = ["E", "F", "I", "UP", "BLE", "RUF"]
 python_version = "3.10"
 mypy_path = "src"
 explicit_package_bases = true
-ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
