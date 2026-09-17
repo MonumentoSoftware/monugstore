@@ -47,7 +47,7 @@ def test_get_file_size_missing(tmp_path):
         (0, "0.00 B"),
         (1024, "1024.00 B"),
         (1025, "1.00 KB"),
-        (1024 ** 2 + 1, "1.00 MB"),
+        (1024**2 + 1, "1.00 MB"),
     ],
 )
 def test_format_size(size, expected):

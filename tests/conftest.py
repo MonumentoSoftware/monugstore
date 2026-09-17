@@ -32,10 +32,13 @@ def mock_storage_client():
 def patch_gcs(mock_storage_client):
     mock_cls = MagicMock(return_value=mock_storage_client)
     mock_cls.from_service_account_json.return_value = mock_storage_client
-    with patch("google.cloud.storage.Client", mock_cls), patch(
-        "monugstore.manager.service_account.Credentials.from_service_account_info",
-        return_value=MagicMock(),
-    ) as mock_creds:
+    with (
+        patch("google.cloud.storage.Client", mock_cls),
+        patch(
+            "monugstore.manager.service_account.Credentials.from_service_account_info",
+            return_value=MagicMock(),
+        ) as mock_creds,
+    ):
         yield {
             "client_cls": mock_cls,
             "client": mock_storage_client,

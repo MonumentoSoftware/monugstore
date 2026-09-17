@@ -42,9 +42,9 @@ def convert_to_webp(image_path, webp_path, quality=None):
 
             # If a quality level is provided, use lossy compression
             if quality is not None:
-                img.save(webp_path, format='WEBP', quality=quality)
+                img.save(webp_path, format="WEBP", quality=quality)
             else:
-                img.save(webp_path, format='WEBP', lossless=True)
+                img.save(webp_path, format="WEBP", lossless=True)
 
     except Exception as e:
         print(f"Error converting image to WebP: {e}")

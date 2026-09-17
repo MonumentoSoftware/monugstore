@@ -13,9 +13,7 @@ def test_credentials_from_json_string_unescapes_private_key():
     ) as mock_creds:
         OauthHandler.credentials_from_json_string(raw, escape=True)
         info = mock_creds.call_args[0][0]
-        assert info["private_key"] == (
-            "-----BEGIN PRIVATE KEY-----\nLINE\n-----END PRIVATE KEY-----\n"
-        )
+        assert info["private_key"] == ("-----BEGIN PRIVATE KEY-----\nLINE\n-----END PRIVATE KEY-----\n")
 
 
 def test_credentials_from_json_string_without_escape():
@@ -27,9 +25,7 @@ def test_credentials_from_json_string_without_escape():
     ) as mock_creds:
         OauthHandler.credentials_from_json_string(raw, escape=False)
         info = mock_creds.call_args[0][0]
-        assert info["private_key"] == (
-            "-----BEGIN PRIVATE KEY-----\\nLINE\\n-----END PRIVATE KEY-----\\n"
-        )
+        assert info["private_key"] == ("-----BEGIN PRIVATE KEY-----\\nLINE\\n-----END PRIVATE KEY-----\\n")
 
 
 def test_access_secret():
@@ -39,7 +35,5 @@ def test_access_secret():
     with patch("monugstore.oauth.secretmanager.SecretManagerServiceClient", return_value=client):
         value = OauthHandler.access_secret("proj", "my-secret", version_id=2)
 
-    client.access_secret_version.assert_called_once_with(
-        request={"name": "projects/proj/secrets/my-secret/versions/2"}
-    )
+    client.access_secret_version.assert_called_once_with(request={"name": "projects/proj/secrets/my-secret/versions/2"})
     assert value == "secret-value"

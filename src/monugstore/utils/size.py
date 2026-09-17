@@ -26,7 +26,7 @@ def format_size(size: int) -> str:
     Returns:
         str: The formatted file size
     """
-    suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
+    suffixes = ["B", "KB", "MB", "GB", "TB"]
     suffix_index = 0
     value = float(size)
     while value > 1024 and suffix_index < len(suffixes) - 1:
