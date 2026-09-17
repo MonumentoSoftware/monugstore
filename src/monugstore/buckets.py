@@ -1,11 +1,12 @@
 from google.cloud import storage
-from .utils.logging import setup_logger
+
+from .utils.logging import LOG_LEVELS, setup_logger
 
 
 class BucketManager:
 
-    def __init__(self, logger_debug: str = 'DEBUG'):
-        self.logger = setup_logger(__class__.__name__, logger_debug)
+    def __init__(self, logger_debug: LOG_LEVELS = "DEBUG"):
+        self.logger = setup_logger("BucketManager", logger_debug)
         self.client = storage.Client()
 
     def create_bucket(self, bucket_name: str, location: str = "US") -> storage.Bucket:

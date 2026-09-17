@@ -1,5 +1,5 @@
-import pathlib
 import os
+import pathlib
 
 from .console import console
 
@@ -41,4 +41,4 @@ def rename_file(file_path: str, new_name: str) -> str:
     # renaming the file
     new_path = path.with_name(new_name)
     path.rename(new_path)
-    return new_path
+    return str(new_path)

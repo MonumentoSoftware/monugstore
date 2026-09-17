@@ -1,11 +1,10 @@
 import json
-from typing import List
 import os
 import pathlib
 
-from google.oauth2 import service_account
-from google.cloud import storage
 from dotenv import load_dotenv
+from google.cloud import storage
+from google.oauth2 import service_account
 
 from .utils.logging import setup_logger
 
@@ -135,7 +134,14 @@ class GCSManager:
         """
         return self.client.get_bucket(bucket_name)
 
-    def upload_file(self, bucket_name: str, file_path: str, destination_blob_name: str, prefix: str = "", public: bool = False) -> str:
+    def upload_file(
+        self,
+        bucket_name: str,
+        file_path: str,
+        destination_blob_name: str,
+        prefix: str = "",
+        public: bool = False,
+    ) -> str:
         """
         Upload a file to the specified bucket.
 
@@ -164,7 +170,7 @@ class GCSManager:
         self.logger.info(f"File {file_path} uploaded to {destination_path}.")
         return blob.public_url
 
-    def list_files(self, bucket_name: str, prefix: str = "") -> List[str]:
+    def list_files(self, bucket_name: str, prefix: str = "") -> list[str]:
         """
         List all files in a specified bucket with an optional prefix.
 
