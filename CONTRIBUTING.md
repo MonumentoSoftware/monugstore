@@ -25,6 +25,15 @@ uv run pytest
 
 Pytest fails the run if coverage of `monugstore` is under 85%.
 
+## Release
+
+Tag `v*` on `main` to build with `uv`, create a GitHub release, and publish to PyPI via trusted publishing.
+
+1. Move `[Unreleased]` notes in `CHANGELOG.md` under a dated version heading.
+2. Bump `version` in `pyproject.toml`.
+3. Merge to `main`, then `git tag -a vX.Y.Z -m "Release vX.Y.Z"` and push the tag.
+4. Configure the GitHub `release` environment and a PyPI trusted publisher for this workflow before the first publish.
+
 ## Pull requests
 
 1. Branch from `main`.

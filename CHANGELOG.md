@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Typed package marker (`py.typed`) and a `src/` layout.
 - GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.12.
 - `GCSManager.delete_all_files()` to empty a bucket.
+- Tag-triggered GitHub Actions release: `uv build`, GitHub release, and PyPI trusted publishing.
 
 ### Changed
 - Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
