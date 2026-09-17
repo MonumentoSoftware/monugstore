@@ -1,10 +1,13 @@
 import importlib
+import logging
 import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 pytest.importorskip("pymongo")
+
+from pymongo.errors import PyMongoError
 
 from monugstore.pymongo import get_client
 
@@ -18,10 +21,12 @@ def test_get_client_success(mock_cls):
     mock_cls.assert_called_once_with("mongodb://localhost")
 
 
-@patch("monugstore.pymongo.MongoClient", side_effect=RuntimeError("boom"))
-def test_get_client_error(mock_cls, capsys):
-    assert get_client("mongodb://localhost") is None
-    assert "Error: boom" in capsys.readouterr().out
+@patch("monugstore.pymongo.MongoClient", side_effect=PyMongoError("boom"))
+def test_get_client_error(mock_cls, caplog):
+    with caplog.at_level(logging.ERROR):
+        assert get_client("mongodb://localhost") is None
+    assert "mongo_client_failed" in caplog.text
+    assert "mongodb://localhost" not in caplog.text
 
 
 def test_mongo_extra_required(monkeypatch):

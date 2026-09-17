@@ -93,10 +93,6 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "BLE", "RUF"]
 
-[tool.ruff.lint.per-file-ignores]
-"src/monugstore/pymongo.py" = ["BLE001"]
-"src/monugstore/utils/images.py" = ["BLE001"]
-
 [tool.mypy]
 python_version = "3.10"
 mypy_path = "src"

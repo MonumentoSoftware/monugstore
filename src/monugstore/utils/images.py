@@ -1,11 +1,14 @@
+import logging
 import os
 
 try:
-    from PIL import Image
+    from PIL import Image, UnidentifiedImageError
 except ImportError as exc:
     raise ImportError(
         "Image helpers require the optional extra 'images'. Install with: pip install 'monugstore[images]'"
     ) from exc
+
+logger = logging.getLogger(__name__)
 
 
 def create_thumbnail(image_path, thumbnail_path, size=(128, 128)):
@@ -22,8 +25,9 @@ def create_thumbnail(image_path, thumbnail_path, size=(128, 128)):
             img.save(thumbnail_path)
         return thumbnail_path
 
-    except Exception as e:
-        print(f"Error creating thumbnail: {e}")
+    except (OSError, UnidentifiedImageError):
+        logger.exception("thumbnail_create_failed")
+        return None
 
 
 def convert_to_webp(image_path, webp_path, quality=None):
@@ -46,5 +50,6 @@ def convert_to_webp(image_path, webp_path, quality=None):
             else:
                 img.save(webp_path, format="WEBP", lossless=True)
 
-    except Exception as e:
-        print(f"Error converting image to WebP: {e}")
+    except (OSError, UnidentifiedImageError):
+        logger.exception("webp_convert_failed")
+        return None
