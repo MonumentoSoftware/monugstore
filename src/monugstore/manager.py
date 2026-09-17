@@ -3,7 +3,7 @@ import os
 import pathlib
 
 from dotenv import load_dotenv
-from google.cloud import storage
+from google.cloud import storage  # type: ignore[attr-defined]
 from google.oauth2 import service_account
 
 from .utils.logging import setup_logger

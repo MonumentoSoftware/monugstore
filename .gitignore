@@ -1,6 +1,8 @@
 .env
+.venv/
 __pycache__/
 *.pyc
+*.egg-info/
 .vscode/
 dist/
 local_scripts/

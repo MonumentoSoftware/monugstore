@@ -33,13 +33,13 @@ This project aims to provide some boilerplate code to handle actions using Googl
 
 To install the project, clone it, and run:
 ```
-poetry install
+uv sync
 ```
 
 Optional extras:
 
 ```
-poetry install --extras "images mongo"
+uv sync --extra images --extra mongo
 ```
 
 # Handling credentials

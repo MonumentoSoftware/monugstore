@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.12.
 
 ### Changed
+- Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.

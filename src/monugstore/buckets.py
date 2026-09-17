@@ -1,4 +1,4 @@
-from google.cloud import storage
+from google.cloud import storage  # type: ignore[attr-defined]
 
 from .utils.logging import LOG_LEVELS, setup_logger
 

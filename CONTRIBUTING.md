@@ -5,21 +5,21 @@
 ```bash
 git clone https://github.com/MonumentoSoftware/monugstore.git
 cd monugstore
-poetry install --with dev --extras "images mongo"
+uv sync --all-extras
 ```
 
-Requires Python 3.10+.
+Requires Python 3.10+ and [uv](https://docs.astral.sh/uv/).
 
 ## Checks
 
 Run the same gates CI runs:
 
 ```bash
-poetry run ruff check src tests
-poetry run mypy src
-poetry run bandit -r src
-poetry run pip-audit
-poetry run pytest
+uv run ruff check src tests
+uv run mypy src
+uv run bandit -r src
+uv run pip-audit
+uv run pytest
 ```
 
 Pytest fails the run if coverage of `monugstore` is under 85%.
