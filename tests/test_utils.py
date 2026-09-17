@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import pytest
@@ -90,14 +91,30 @@ def test_format_size(size, expected):
 
 
 def test_setup_logger_invalid_level():
+    logger = logging.getLogger("test-logger-invalid")
+    logger.handlers.clear()
     with pytest.raises(ValueError, match="Invalid log level"):
         setup_logger("test-logger-invalid", "NOPE")
+    assert logger.handlers == []
 
 
 def test_setup_logger_emits_message(capsys):
+    logging.getLogger("test-logger-unique").handlers.clear()
     logger = setup_logger("test-logger-unique", "INFO")
     logger.info("hello-from-test")
     captured = capsys.readouterr()
     text = captured.err + captured.out
     assert "hello-from-test" in text
     assert "test-logger-unique" in text
+
+
+def test_setup_logger_does_not_add_duplicate_handlers():
+    name = "test-logger-once"
+    logging.getLogger(name).handlers.clear()
+
+    first = setup_logger(name, "INFO")
+    second = setup_logger(name, "DEBUG")
+
+    assert first is second
+    assert len(first.handlers) == 1
+    assert first.level == logging.DEBUG
