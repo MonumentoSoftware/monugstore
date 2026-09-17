@@ -1,5 +1,8 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+from google.cloud.exceptions import NotFound
+
 from monugstore.buckets import BucketManager
 
 
@@ -46,7 +49,8 @@ def test_delete_all_files_success(mock_client_cls):
 def test_delete_all_files_error(mock_client_cls):
     bucket = MagicMock()
     bucket.name = "my-bucket"
-    bucket.list_blobs.side_effect = RuntimeError("denied")
+    bucket.list_blobs.side_effect = NotFound("denied")
     manager = BucketManager()
 
-    assert manager.delete_all_files(bucket) is None
+    with pytest.raises(NotFound):
+        manager.delete_all_files(bucket)

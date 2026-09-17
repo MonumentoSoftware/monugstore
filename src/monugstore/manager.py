@@ -39,7 +39,7 @@ class GCSManager:
         load_dotenv()
         value = os.getenv(env_variable)
         if not value:
-            raise Exception(f"Environment variable {env_variable} not set.")
+            raise ValueError(f"Environment variable {env_variable} not set.")
         return value
 
     @classmethod
@@ -58,9 +58,9 @@ class GCSManager:
             cred = service_account.Credentials.from_service_account_info(json.loads(json_str))
             client = storage.Client(credentials=cred)
             return cls(client)
-        except Exception as e:
-            cls.logger.error(f"Error creating GCSManager: {e}")
-            raise Exception(f"Error creating GCSManager: {e}")
+        except Exception:
+            cls.logger.exception("Error creating GCSManager")
+            raise
 
     @classmethod
     def from_json_file(cls, json_file_path: str) -> "GCSManager":
@@ -77,9 +77,9 @@ class GCSManager:
         try:
             client = storage.Client.from_service_account_json(json_file_path)
             return cls(client)
-        except Exception as e:
-            cls.logger.error(f"Error creating GCSManager: {e}")
-            raise Exception(f"Error creating GCSManager: {e}")
+        except Exception:
+            cls.logger.exception("Error creating GCSManager")
+            raise
 
     @classmethod
     def from_env(cls, env_variable: str) -> "GCSManager":
@@ -129,12 +129,11 @@ class GCSManager:
 
         Returns:
             storage.Bucket: The bucket object
+
+        Raises:
+            google.cloud.exceptions.NotFound: If the bucket does not exist.
         """
-        if not self.client.lookup_bucket(bucket_name):
-            self.logger.error(f"Bucket {bucket_name} not found.")
-            return None
-        bucket = self.client.bucket(bucket_name)
-        return bucket
+        return self.client.get_bucket(bucket_name)
 
     def upload_file(self, bucket_name: str, file_path: str, destination_blob_name: str, prefix: str = "", public: bool = False) -> str:
         """
@@ -151,15 +150,13 @@ class GCSManager:
             str: The public URL of the uploaded file
         """
         bucket = self.get_bucket(bucket_name)
-        if bucket is None:
-            return None
         destination_path = f"{prefix}/{destination_blob_name}" if prefix else destination_blob_name
         if not pathlib.Path(file_path).is_file():
-            self.logger.error(f"File {file_path} not found.")
-            return None
-        if bucket.get_blob(destination_path):
+            raise FileNotFoundError(file_path)
+        existing = bucket.get_blob(destination_path)
+        if existing:
             self.logger.info(f"Blob {destination_path} already exists in bucket {bucket_name}.")
-            return None
+            return existing.public_url
         blob = bucket.blob(destination_path)
         blob.upload_from_filename(file_path)
         if public:
@@ -211,16 +208,10 @@ class GCSManager:
         Returns:
             None
         """
-        try:
-            bucket = self.client.bucket(bucket_name)
-            blob = bucket.blob(blob_name)
-            blob.delete()
-            self.logger.info(f"Blob {blob_name} deleted from bucket {bucket_name}.")
-            return True
-
-        except Exception as e:
-            self.logger.error(f"Error deleting blob {blob_name} from bucket {bucket_name}: {e}")
-            return False
+        bucket = self.client.bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+        blob.delete()
+        self.logger.info(f"Blob {blob_name} deleted from bucket {bucket_name}.")
 
     def delete_bucket(self, bucket_name: str) -> None:
         """

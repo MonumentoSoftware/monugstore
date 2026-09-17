@@ -19,13 +19,8 @@ class BucketManager:
         return bucket
 
     def delete_all_files(self, bucket: storage.Bucket):
-        try:
-            blobs: list[storage.Blob] = bucket.list_blobs()
-            for blob in blobs:
-                blob.delete()
-            self.logger.info(f"All files in {bucket.name} were deleted")
-            return bucket
-
-        except Exception as e:
-            self.logger.error(f"Error deleting files from {bucket.name}: {e}")
-            return None
+        blobs: list[storage.Blob] = bucket.list_blobs()
+        for blob in blobs:
+            blob.delete()
+        self.logger.info(f"All files in {bucket.name} were deleted")
+        return bucket

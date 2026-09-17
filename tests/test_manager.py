@@ -2,6 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 import pytest
+from google.cloud.exceptions import NotFound
 
 from monugstore import GCSManager
 
@@ -26,10 +27,10 @@ def test_from_json_file_does_not_treat_arg_as_env_var(patch_gcs, monkeypatch, tm
     patch_gcs["client_cls"].from_service_account_json.assert_called_once_with(str(creds))
 
 
-def test_from_json_file_wraps_errors(patch_gcs):
+def test_from_json_file_propagates_errors(patch_gcs):
     patch_gcs["client_cls"].from_service_account_json.side_effect = OSError("missing")
 
-    with pytest.raises(Exception, match="Error creating GCSManager"):
+    with pytest.raises(OSError, match="missing"):
         GCSManager.from_json_file("/no/such/file.json")
 
 
@@ -50,7 +51,7 @@ def test_from_json_string_does_not_look_up_env(patch_gcs, fake_sa_json, monkeypa
 
 
 def test_from_json_string_invalid_json(patch_gcs):
-    with pytest.raises(Exception, match="Error creating GCSManager"):
+    with pytest.raises(json.JSONDecodeError):
         GCSManager.from_json_string("not-json")
 
 
@@ -66,7 +67,7 @@ def test_from_env_reads_named_variable(patch_gcs, fake_sa_json, monkeypatch):
 def test_from_env_missing_variable(monkeypatch):
     monkeypatch.delenv("MISSING_CREDS", raising=False)
 
-    with pytest.raises(Exception, match="Environment variable MISSING_CREDS not set"):
+    with pytest.raises(ValueError, match="Environment variable MISSING_CREDS not set"):
         GCSManager.from_env("MISSING_CREDS")
 
 
@@ -116,27 +117,26 @@ def test_create_bucket_returns_existing(manager, mock_storage_client):
 
 
 def test_get_bucket_found(manager, mock_storage_client):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
-    mock_storage_client.bucket.return_value = bucket
+    mock_storage_client.get_bucket.return_value = bucket
 
     assert manager.get_bucket("my-bucket") is bucket
 
 
 def test_get_bucket_missing(manager, mock_storage_client):
-    mock_storage_client.lookup_bucket.return_value = None
+    mock_storage_client.get_bucket.side_effect = NotFound("missing")
 
-    assert manager.get_bucket("missing") is None
+    with pytest.raises(NotFound):
+        manager.get_bucket("missing")
 
 
 def test_upload_file_with_prefix(manager, mock_storage_client, tmp_path):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
     bucket.get_blob.return_value = None
     blob = MagicMock()
     blob.public_url = "https://example.com/uploads/file.jpg"
     bucket.blob.return_value = blob
-    mock_storage_client.bucket.return_value = bucket
+    mock_storage_client.get_bucket.return_value = bucket
     source = tmp_path / "file.jpg"
     source.write_bytes(b"img")
 
@@ -149,13 +149,12 @@ def test_upload_file_with_prefix(manager, mock_storage_client, tmp_path):
 
 
 def test_upload_file_without_prefix(manager, mock_storage_client, tmp_path):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
     bucket.get_blob.return_value = None
     blob = MagicMock()
     blob.public_url = "https://example.com/file.jpg"
     bucket.blob.return_value = blob
-    mock_storage_client.bucket.return_value = bucket
+    mock_storage_client.get_bucket.return_value = bucket
     source = tmp_path / "file.jpg"
     source.write_bytes(b"img")
 
@@ -165,13 +164,12 @@ def test_upload_file_without_prefix(manager, mock_storage_client, tmp_path):
 
 
 def test_upload_file_public(manager, mock_storage_client, tmp_path):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
     bucket.get_blob.return_value = None
     blob = MagicMock()
     blob.public_url = "https://example.com/file.jpg"
     bucket.blob.return_value = blob
-    mock_storage_client.bucket.return_value = bucket
+    mock_storage_client.get_bucket.return_value = bucket
     source = tmp_path / "file.jpg"
     source.write_bytes(b"img")
 
@@ -181,31 +179,35 @@ def test_upload_file_public(manager, mock_storage_client, tmp_path):
 
 
 def test_upload_file_missing_bucket(manager, mock_storage_client, tmp_path):
-    mock_storage_client.lookup_bucket.return_value = None
+    mock_storage_client.get_bucket.side_effect = NotFound("missing")
     source = tmp_path / "file.jpg"
     source.write_bytes(b"img")
 
-    assert manager.upload_file("missing", str(source), "file.jpg") is None
+    with pytest.raises(NotFound):
+        manager.upload_file("missing", str(source), "file.jpg")
 
 
 def test_upload_file_missing_local_file(manager, mock_storage_client):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
-    mock_storage_client.bucket.return_value = bucket
+    mock_storage_client.get_bucket.return_value = bucket
 
-    assert manager.upload_file("my-bucket", "/no/such/file.jpg", "file.jpg") is None
+    with pytest.raises(FileNotFoundError):
+        manager.upload_file("my-bucket", "/no/such/file.jpg", "file.jpg")
     bucket.blob.assert_not_called()
 
 
 def test_upload_file_existing_blob(manager, mock_storage_client, tmp_path):
-    mock_storage_client.lookup_bucket.return_value = True
     bucket = MagicMock()
-    bucket.get_blob.return_value = MagicMock()
-    mock_storage_client.bucket.return_value = bucket
+    existing = MagicMock()
+    existing.public_url = "https://example.com/file.jpg"
+    bucket.get_blob.return_value = existing
+    mock_storage_client.get_bucket.return_value = bucket
     source = tmp_path / "file.jpg"
     source.write_bytes(b"img")
 
-    assert manager.upload_file("my-bucket", str(source), "file.jpg") is None
+    url = manager.upload_file("my-bucket", str(source), "file.jpg")
+
+    assert url == "https://example.com/file.jpg"
     bucket.blob.assert_not_called()
 
 
@@ -239,14 +241,15 @@ def test_delete_file_success(manager, mock_storage_client):
     bucket.blob.return_value = blob
     mock_storage_client.bucket.return_value = bucket
 
-    assert manager.delete_file("my-bucket", "file.jpg") is True
+    manager.delete_file("my-bucket", "file.jpg")
     blob.delete.assert_called_once()
 
 
 def test_delete_file_error(manager, mock_storage_client):
-    mock_storage_client.bucket.side_effect = RuntimeError("denied")
+    mock_storage_client.bucket.side_effect = NotFound("denied")
 
-    assert manager.delete_file("my-bucket", "file.jpg") is False
+    with pytest.raises(NotFound):
+        manager.delete_file("my-bucket", "file.jpg")
 
 
 def test_delete_bucket(manager, mock_storage_client):
