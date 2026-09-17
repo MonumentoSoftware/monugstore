@@ -1,6 +1,11 @@
 import os
 
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError as exc:
+    raise ImportError(
+        "Image helpers require the optional extra 'images'. Install with: pip install 'monugstore[images]'"
+    ) from exc
 
 
 def create_thumbnail(image_path, thumbnail_path, size=(128, 128)):

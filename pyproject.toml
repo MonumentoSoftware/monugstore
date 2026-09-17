@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "monugstore"
 version = "0.1.0"
-description = "A quick python cookbook for dealing with google-cloud-storage"
+description = "Python helpers for Google Cloud Storage"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -16,7 +16,6 @@ dependencies = [
     "google-cloud-storage>=2.18.2,<3",
     "google-cloud-secret-manager>=2.20.2,<3",
     "python-dotenv>=1.2.2,<2",
-    "rich>=13.9.1,<14",
 ]
 
 [project.optional-dependencies]

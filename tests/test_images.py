@@ -1,3 +1,5 @@
+import importlib
+import sys
 from pathlib import Path
 
 import pytest
@@ -52,3 +54,12 @@ def test_convert_to_webp_quality(tmp_path):
 
 def test_convert_to_webp_error():
     convert_to_webp("/no/such.png", "/tmp/out.webp")
+
+
+def test_images_extra_required(monkeypatch):
+    monkeypatch.setitem(sys.modules, "PIL", None)
+    monkeypatch.setitem(sys.modules, "PIL.Image", None)
+    sys.modules.pop("monugstore.utils.images", None)
+
+    with pytest.raises(ImportError, match=r"monugstore\[images\]"):
+        importlib.import_module("monugstore.utils.images")

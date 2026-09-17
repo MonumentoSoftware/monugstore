@@ -1,6 +1,6 @@
 # Monumento Gcloud Storage
 
-This project aims to provide some boilerplate code to handle actions using Google Cloud Storage.
+Python helpers for Google Cloud Storage: credentials, buckets, and objects.
 
 - [Monumento Gcloud Storage](#monumento-gcloud-storage)
 - [Requirements](#requirements)
@@ -17,6 +17,7 @@ This project aims to provide some boilerplate code to handle actions using Googl
     - [Listing files using prefix](#listing-files-using-prefix)
   - [Download a file](#download-a-file)
   - [Deleting a file](#deleting-a-file)
+  - [Emptying a bucket](#emptying-a-bucket)
   - [Deleting a bucket](#deleting-a-bucket)
 - [Contributing](#contributing)
 - [Security](#security)
@@ -36,7 +37,7 @@ To install the project, clone it, and run:
 uv sync
 ```
 
-Optional extras:
+Optional extras install Pillow (`images`) and pymongo (`mongo`). They are not part of the public API (`GCSManager`, `OauthHandler`):
 
 ```
 uv sync --extra images --extra mongo
@@ -194,6 +195,13 @@ bucket_name = "my-bucket"
 file_name = "file.jpg"
 
 gcs_manager.delete_file(bucket_name, file_name)
+```
+
+## Emptying a bucket
+You can delete every object in a bucket with `delete_all_files`. The bucket must exist.
+
+```python
+gcs_manager.delete_all_files("my-bucket")
 ```
 
 ## Deleting a bucket

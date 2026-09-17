@@ -1,6 +1,11 @@
 from typing import Any
 
-from pymongo import MongoClient
+try:
+    from pymongo import MongoClient
+except ImportError as exc:
+    raise ImportError(
+        "Mongo helpers require the optional extra 'mongo'. Install with: pip install 'monugstore[mongo]'"
+    ) from exc
 
 
 def get_client(conn_str: str) -> MongoClient[Any] | None:

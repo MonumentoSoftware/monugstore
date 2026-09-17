@@ -1022,7 +1022,6 @@ dependencies = [
     { name = "google-cloud-secret-manager" },
     { name = "google-cloud-storage" },
     { name = "python-dotenv" },
-    { name = "rich" },
 ]
 
 [package.optional-dependencies]
@@ -1050,7 +1049,6 @@ requires-dist = [
     { name = "pillow", marker = "extra == 'images'", specifier = ">=12.3.0,<13" },
     { name = "pymongo", marker = "extra == 'mongo'", specifier = ">=4.10.1,<5" },
     { name = "python-dotenv", specifier = ">=1.2.2,<2" },
-    { name = "rich", specifier = ">=13.9.1,<14" },
 ]
 provides-extras = ["images", "mongo"]
 

@@ -12,12 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional extras: `images` (Pillow) and `mongo` (pymongo).
 - Typed package marker (`py.typed`) and a `src/` layout.
 - GitHub Actions CI: ruff, mypy, bandit, pip-audit, and pytest on Python 3.10–3.12.
+- `GCSManager.delete_all_files()` to empty a bucket.
 
 ### Changed
 - Packaging uses uv and PEP 621 (`pyproject.toml` + `uv.lock`) instead of Poetry.
 - `find_files(..., verbose=True)` replaces the `print` argument that shadowed the builtin.
 - `from_json_file` takes a file path; `from_json_string` takes JSON content.
 - `create_bucket` is keyword-only and defaults to a private bucket (`public=False`).
+- Optional `images` and `mongo` modules raise `ImportError` pointing at the extra when it is not installed.
 - Missing buckets raise `google.cloud.exceptions.NotFound`; missing local files raise `FileNotFoundError`.
 - Supported Python range is `^3.10` (Pillow 12 and python-dotenv 1.2 require it).
 
@@ -27,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Unused `pydantic` dependency.
 - Unused `GCSManagerInterface`, `BucketExistsDecorator`, and the extra `BucketManager` client on `GCSManager`.
+- `BucketManager`; use `GCSManager` for bucket create, ACL, and emptying.
+- File-walk helpers (`monugstore.utils.files`) and the `rich` dependency they required.
 
 ### Security
 - New buckets are private unless `public=True` is passed.
